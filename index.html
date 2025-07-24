@@ -18,7 +18,6 @@
             --success-color: #27ae60;
             --error-color: #c0392b;
         }
-
         body {
             display: flex;
             flex-direction: column;
@@ -32,7 +31,6 @@
             overflow-x: hidden;
             color: var(--text-color);
         }
-
         #game-container {
             text-align: center;
             background: var(--container-bg);
@@ -46,27 +44,23 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
         }
-        
         h1 {
             font-size: clamp(22px, 5vw, 30px);
             margin-bottom: 10px;
             color: var(--primary-color);
             font-weight: 700;
         }
-
         p {
             font-size: clamp(15px, 4vw, 17px);
             line-height: 1.6;
             margin-top: 0;
         }
-        
         .instruction-vi {
             font-size: clamp(13px, 3.5vw, 15px);
             color: var(--light-text);
             margin-top: 4px;
             display: block;
         }
-
         input[type="text"] {
             padding: 12px 18px;
             font-size: clamp(14px, 4vw, 16px);
@@ -79,13 +73,11 @@
             border-radius: 10px;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-
         input[type="text"]:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 8px rgba(22, 160, 133, 0.2);
         }
-
         .button-group {
             display: flex;
             flex-wrap: wrap;
@@ -93,7 +85,6 @@
             gap: 12px;
             margin-top: 10px;
         }
-
         button {
             padding: 12px 25px;
             font-size: clamp(14px, 4vw, 16px);
@@ -108,17 +99,14 @@
             transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-
         button:hover {
             background-color: var(--primary-hover);
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(22, 160, 133, 0.2);
         }
-        
         button:active {
             transform: translateY(0);
         }
-
         #hint {
             color: var(--light-text);
             font-style: italic;
@@ -128,22 +116,18 @@
             line-height: 1.5;
             min-height: 22px;
         }
-
         #completion, #result {
             font-size: clamp(15px, 4vw, 18px);
             font-weight: 600;
             margin-top: 15px;
             min-height: 27px;
         }
-        
         #result.correct {
             color: var(--success-color);
         }
-        
         #result.incorrect {
             color: var(--error-color);
         }
-
         .particle {
             position: absolute;
             background: var(--primary-hover);
@@ -152,7 +136,6 @@
             z-index: 10;
             opacity: 0;
         }
-
         @keyframes confetti-fall {
             0% {
                 transform: translateY(-100px) rotateZ(0deg);
@@ -251,7 +234,6 @@
             { english: "I was angry at losing the game.", vietnamese: "Tôi đã tức giận vì thua trận." },
             { english: "My mom was angry at my bad grades.", vietnamese: "Mẹ tôi đã tức giận về điểm kém của tôi." }
         ];
-
         let currentSentenceIndex = 0;
         let completedCount = 0;
         let isPlaying = false;
@@ -262,7 +244,6 @@
         function createConfetti() {
             const gameContainer = document.getElementById('game-container');
             const containerRect = gameContainer.getBoundingClientRect();
-            
             for (let i = 0; i < 50; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'particle';
@@ -271,10 +252,10 @@
                 confetti.style.height = `${size}px`;
                 confetti.style.left = `${Math.random() * containerRect.width}px`;
                 confetti.style.top = `${-20}px`;
-                confetti.style.animation = `confetti-fall ${Math.random() * 1 + 1}s ease-out forwards`;
+                confetti.style.animation = `confetti-fall ${Math.random() * 1 + 1.5}s ease-out forwards`;
                 confetti.style.animationDelay = `${Math.random() * 1}s`;
                 gameContainer.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 2000);
+                setTimeout(() => confetti.remove(), 2500);
             }
         }
 
@@ -290,7 +271,7 @@
                 speechSynthesis.speak(utterance);
             }
         }
-        
+
         function startAutoPlay() {
             if (autoPlayInterval) clearInterval(autoPlayInterval);
             autoPlayInterval = setInterval(() => {
@@ -311,7 +292,7 @@
             const result = document.getElementById('result');
             const currentSentence = sentences[currentSentenceIndex].english;
 
-            const normalize = (str) => str.toLowerCase().replace(/[.,!?']/g, '');
+            const normalize = (str) => str.toLowerCase().replace(/[.,!?\'’‘`]/g, '').replace(/\s+/g, ' ');
 
             if (normalize(userInput) === normalize(currentSentence)) {
                 stopAutoPlay();
@@ -319,16 +300,15 @@
                 result.className = 'correct';
                 createConfetti();
                 wrongAttempts = 0;
-                
                 setTimeout(() => {
                     currentSentenceIndex++;
                     completedCount++;
                     if (currentSentenceIndex >= TOTAL_SENTENCES) {
                         document.getElementById('game-container').innerHTML = `<h1>Congratulations!</h1><p>You have completed all ${completedCount} sentences!</p><button onclick="resetGame()">Play Again</button>`;
                     } else {
-                         updateGameScreen();
-                         playSentence();
-                         startAutoPlay();
+                        updateGameScreen();
+                        playSentence();
+                        startAutoPlay();
                     }
                 }, 2000);
             } else {
@@ -352,14 +332,14 @@
                 }
             }
         }
-        
+
         function updateGameScreen() {
-             if (document.getElementById('userInput')) {
+            if (document.getElementById('userInput')) {
                 document.getElementById('userInput').value = '';
                 document.getElementById('hint').textContent = '';
                 document.getElementById('result').textContent = '';
                 document.getElementById('completion').textContent = `Completed: ${completedCount}/${TOTAL_SENTENCES}`;
-             }
+            }
         }
 
         function showHint() {
@@ -369,6 +349,8 @@
 
         function startGame() {
             wrongAttempts = 0;
+            // The shuffling logic has been removed. Sentences will now appear in order.
+            
             document.getElementById('game-container').innerHTML = `
                 <h1>Spelling Master</h1>
                 <p>Listen carefully and type the sentence you hear.<span class="instruction-vi">Hãy lắng nghe cẩn thận và gõ lại câu bạn nghe được.</span></p>
@@ -395,16 +377,16 @@
             wrongAttempts = 0;
             speechSynthesis.cancel();
             isPlaying = false;
-            
             document.getElementById('game-container').innerHTML = `
                 <h1>Spelling Master Game</h1>
                 <p>Click Start to begin the game!<span class="instruction-vi">Nhấn Bắt đầu để chơi!</span></p>
                 <button onclick="startGame()">Start</button>
             `;
         }
-        
+
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent form submission if it's inside a form
                 checkAnswer();
             }
         }
